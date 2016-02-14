@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="CSHAssets">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,12 +7,16 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="../../favicon.ico">
+    <link rel="icon" href="resources/images/favicon.ico">
 
     <title>CSH Assets</title>
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <!-- Material Bootstrap CSS -->
+    <link href="resources/css/bootstrap-material-design.css" rel="stylesheet">  
+    <!-- FontAwesome CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <!-- CSH Flat Bootstrap CSS -->
     <link href="resources/css/members-flat.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
@@ -22,44 +26,156 @@
 
   <body>
 
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#"><img src="resources/images/csh_logo_white.svg">Assets</a>
+          <a class="navbar-brand" href="#"><img src="resources/images/csh_logo_white.svg" class="logo">Assets</a>
+            
         </div>
-        <div id="navbar" class="collapse navbar-collapse">
+          <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li><a href="#" data-toggle="modal" data-target="#uploadModal" style="color:#FFF; outline:0;"><i class="fa fa-cloud-upload"></i> Upload</a></li>
           </ul>
-        </div><!--/.nav-collapse -->
+        </div>
+        
       </div>
     </nav>
-
+      
     <div class="container">
 
-      <div class="starter-template">
-        <h1>Bootstrap starter template</h1>
-        <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
-      </div>
+<div style="padding-top:70px;"></div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <input type="text" ng-model="search" class="search-field" placeholder="Search Assets...">
+                    </div>
+                </div>
+            
+            </div>
+        </div>
+        <div class="row" ng-controller="assetController">
+            <div id="grid" data-columns>
+                
+                <!-- ng-repeat the following -->
+                <div class="panel panel-default" style="min-height:190px;" ng-repeat="asset in assets">
+                    <div class="panel-body">
+                        <div class="asset-image-container">
+                            <img ng-src="{{setSrc({{asset.name}})}}" class="img-responsive asset-image">
+                            
+                        </div>
+                        <hr style="margin-bottom:10px;">
+                        <div class="asset-name">
+                            {{asset.name}}
+                            
+                        </div>    
+                        <div class="asset-author-date">
+                            {{asset.author}} - {{asset.uploaded}}
+                        </div>
+                        <p class="asset-description">
+                           {{asset.description}}
+                        
+                        </p>
+                        <hr style="margin-bottom:10px;">
+                        <div class="input-group">
+      <input type="text" class="form-control" placeholder="Asset URL" value="https://assets.csh.rit.edu/uploads/{{asset.name}}" id="url">
+      <span class="input-group-btn" style="padding-right:0px; padding-left:12px">
+        <button class="btn btn-default btn-copy" type="button" style="border-radius:100%; padding-top:9px; padding-bottom:9px" data-clipboard-text="https://assets.csh.rit.edu/uploads/{{asset.name}}" data-toggle="tooltip" data-placement="top" title="Copy to Clipboard"><i class="fa fa-clipboard"></i></button>
+      </span>
+                    
+    </div><!-- /input-group -->
+                        
+                        </div>
+            
+                    </div>
+                </div>
+            </div>
+                
+                
+                
+            
+       
+        
+        
+        
 
     </div><!-- /.container -->
 
+      
+    <!-- Modal -->
+<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Upload Asset</h4>
+      </div>
+        <form name="uploadAsset" method="post" action="#">
+      <div class="modal-body">
+        
+        
+            <div class="form-group label-floating is-empty upload-form-group">
+                
+                <label class="control-label" for="assetName">Asset Name</label>
+                
+                <input class="form-control" id="assetName" name="name" type="text">
+                <span class="material-input"></span>
+            </div>
+            <div class="form-group label-floating upload-form-group is-empty">
+                <label for="textArea" class="control-label">Brief Description</label>
+
+                
+                <textarea class="form-control" rows="3" id="description" name="description"></textarea>
+                <span class="help-block">Add a brief description of this asset.</span>
+                
+              <span class="material-input"></span>
+            </div>
+            <div class="form-group is-empty is-fileinput">
+            <input type="file" id="file" name="file" multiple="">
+            <div class="input-group" style="margin-top:5px;">
+              <input type="text" readonly="" class="form-control" placeholder="Select File...">
+                <span class="input-group-btn input-group-sm">
+                  <button type="button" class="btn btn-default" style="border-radius:100%; padding-top:7px; padding-bottom:7px">
+                    <i class="fa fa-file"></i>
+                  </button>
+                </span>
+            </div>
+          <span class="material-input"></span></div>
+            
+            
+          
+          
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger"><i class="fa fa-upload"></i> Upload</button>
+      </div>
+          </form>
+    </div>
+  </div>
+</div>  
+      
+      
+      
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-    <script src="../../dist/js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="resources/js/material.min.js"></script>
+    <script src="resources/js/salvattore.min.js"></script>
+    <script src="resources/js/clipboard.min.js"></script>
+    <script src="resources/js/assets.js"></script>
+      <script src="resources/js/app.js"></script>
+    
   </body>
 </html>
