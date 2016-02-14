@@ -64,10 +64,10 @@
             <div id="grid" data-columns>
                 
                 <!-- ng-repeat the following -->
-                <div class="panel panel-default" style="min-height:190px;" ng-repeat="asset in data">
+                <div class="panel panel-default" style="min-height:190px;" ng-repeat="asset in data | filter:search">
                     <div class="panel-body">
                         <div class="asset-image-container">
-                            <img ng-src="{{setSrc({{asset.name}})}}" class="img-responsive asset-image">
+                            <img ng-src="{{setSrc(asset.name)}}" class="img-responsive asset-image">
                             
                         </div>
                         <hr style="margin-bottom:10px;">

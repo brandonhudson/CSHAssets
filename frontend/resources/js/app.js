@@ -3,7 +3,7 @@ var app = angular.module('CSHAssets', []);
 app.controller('assetController', function ($scope, $http) {
     $http.get('/list_files')
     .success(function(data, status, headers, config) {
-        console.log(data.files); //debug
+        console.log(data); //debug
         $scope.data = data.files;
         
   })
