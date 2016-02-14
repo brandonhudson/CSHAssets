@@ -1,3 +1,4 @@
+import base64
 from datetime import datetime
 from flask import Flask, jsonify, request, redirect, url_for, send_from_directory
 import hashlib
@@ -15,15 +16,16 @@ def hash_file(fname):
     with open(fname, "rb") as f:
         for chunk in iter(lambda: f.read(4096), b""):
             m.update(chunk)
-    return m.hexdigest()
+    hash_ = m.digest()
+    return base64.b64encode(hash_).decode()
 
 # Add file to local database
 def add_file(file_hash, file_name, common_name, description, author):
-    with open("upload_data.json", mode="r+", encoding='utf-8') as db:
+    with open("upload_data.json", mode="r+") as db:
         data = json.load(db)
         print(data)
         entry = {
-            'hash': file_hash,
+            'asset_hash': file_hash,
             'common_name': common_name,
             'name': file_name,
             'description': description,
@@ -34,6 +36,7 @@ def add_file(file_hash, file_name, common_name, description, author):
         db.seek(0)
         db.truncate()
         json.dump(data, db)
+        return entry
 
 # List added files
 @app.route('/list_files', methods=['GET', 'POST'])
@@ -59,10 +62,9 @@ def upload_file():
             if not os.path.exists(filepath):
                 file_.save(filepath)
                 file_hash = hash_file(filepath)
-                add_file(file_hash, filename, common_name, description, author)
+                return jsonify(add_file(file_hash, filename, common_name, description, author))
             else:
-                return "ERROR FILE EXISTS!!!!"
-            return os.path.join('/uploads', filename)
+                return "ERROR FILE EXISTS!!!!", 409
 
 with open(sys.argv[1]) as json_file:
     json_config = json.load(json_file)

@@ -1,9 +1,13 @@
+
+
+
+
 var app = angular.module('CSHAssets', []);
 
 app.controller('assetController', function ($scope, $http) {
     $http.get('/list_files')
     .success(function(data, status, headers, config) {
-        console.log(data); //debug
+        console.log(data.files); //debug
         $scope.data = data.files;
         
   })
@@ -32,43 +36,54 @@ app.controller('assetController', function ($scope, $http) {
             return "resources/images/unknown.png";
         }
     }
-    
-    
-
-
-});
-
-app.controller('navController', function ($scope, $http) {
-    $http.get('../resources/api/?submission')
-    .success(function(data, status, headers, config) {
-        console.log(data) //debug
-        $scope.submissions = data.data[0].config_value;
+    $scope.copyAsset = function(element){
+        newValue = "Copied!";
+        oldValue = "Copy to Clipboard";
+        $(element).tooltip('hide')
+          .attr('data-original-title', newValue)
+          .tooltip('fixTitle')
+          .tooltip('show').attr('data-original-title', oldValue)
+          .tooltip('fixTitle'); 
         
-  })
-  .error(function(data, status, headers, config) {   
-        notify("error","Cannot get submission status.") //debug
-    // called asynchronously if an error occurs
-    // or server returns response with an error status.
-  });
+    }
+    $scope.userAgent = function(){
+        var is_chrome = navigator.userAgent.indexOf('Chrome') > -1;
+                var is_explorer = navigator.userAgent.indexOf('MSIE') > -1;
+                var is_firefox = navigator.userAgent.indexOf('Firefox') > -1;
+                var is_safari = navigator.userAgent.indexOf("Safari") > -1;
+                var is_opera = navigator.userAgent.toLowerCase().indexOf("op") > -1;
+                if ((is_chrome)&&(is_safari)) {is_safari=false;}
+                if ((is_chrome)&&(is_opera)) {is_chrome=false;}
+
+                if (is_safari) return true;
+        
+    }
     
-  $scope.toggleSubmission = function(val){
-     toggleSubmission(val, function(success){
-        if(val == "F"){
-            if(success){
-                $scope.submissions = "F";
-            }
-          
-        }
-         else{
-             if(success){
-                $scope.submissions = "T";
-            }
-          
-        }  
-         
-     });
-      
-  }
 
 
 });
+
+app.directive('tooltip', function(){
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs){
+            $(element).hover(function(){
+                // on mouseenter
+                $(element).tooltip('show');
+            }, function(){
+                // on mouseleave
+                $(element).tooltip('hide');
+            }),
+            $(element).click(function(){
+                 newValue = "Copied!";
+    oldValue = "Copy to Clipboard";
+   $(this).tooltip('hide')
+          .attr('data-original-title', newValue)
+          .tooltip('fixTitle')
+          .tooltip('show').attr('data-original-title', oldValue)
+          .tooltip('fixTitle'); 
+            });
+        }
+    };
+});
+

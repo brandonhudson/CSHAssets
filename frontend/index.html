@@ -7,7 +7,7 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="resources/images/favicon.ico">
+    <link rel="icon" href="https://assets.csh.rit.edu/uploads/favicon.ico">
 
     <title>CSH Assets</title>
 
@@ -18,13 +18,13 @@
     <!-- FontAwesome CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <!-- CSH Flat Bootstrap CSS -->
-    <link href="resources/css/members-flat.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://assets.csh.rit.edu/uploads/members-flat.min.css" integrity="sha384-3TYQ9PYHcowP90vgZ3i3DFeLOJk+LtlFIi0zebRyhwVNEhJMJpR0H1er9ZphohJ7" crossorigin="anonymous">
     <!-- Custom styles for this template -->
     <link href="resources/css/assets.css" rel="stylesheet">
 
   </head>
 
-  <body>
+  <body >
 
     <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container">
@@ -60,17 +60,28 @@
             
             </div>
         </div>
-        <div class="row" ng-controller="assetController">
-            <div id="grid" data-columns>
+        <div ng-controller="assetController" userAgent>
+            
+            <div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-offset-2 col-md-8 asset-container" ng-repeat="asset in data | filter:search">
+            
                 
                 <!-- ng-repeat the following -->
-                <div class="panel panel-default" style="min-height:190px;" ng-repeat="asset in data">
+                
+                <div class="panel panel-default">
                     <div class="panel-body">
-                        <div class="asset-image-container">
+                        <div class="col-xs-12 col-sm-3 col-md-2">
+                        
                             <img ng-src="{{setSrc(asset.name)}}" class="img-responsive asset-image">
                             
-                        </div>
-                        <hr style="margin-bottom:10px;">
+                        
+                             <div class="hr desktop-hide" style="height:0px;"></div>
+                            </div>
+                        
+                        
+                       
+                        
+                        <div class="col-xs-12 col-sm-9 col-md-10">
+                        
                         <div class="asset-name">
                             {{asset.common_name}}
                             
@@ -82,18 +93,45 @@
                            {{asset.description}}
                         
                         </p>
-                        <hr style="margin-bottom:10px;">
-                        <div class="input-group">
-      <input type="text" class="form-control" placeholder="Asset URL" value="https://assets.csh.rit.edu/uploads/{{asset.name}}" id="url">
+                            <div style="margin-top:-5px; margin-bottom:5px;">
+                            <button type="button" data-toggle="collapse" data-target="#{{$index}}collapse" aria-expanded="false" aria-controls="{{$index}}collapse" style="color:#666; text-decoration:none; border:none; background:transparent; outline:none; padding:0px;">
+  SHA-384 Hash <span class="caret"></span>
+</button>
+                            </div>
+<div class="collapse" id="{{$index}}collapse">
+
+    <div class="input-group">
+                    <textarea type="text" placeholder="Asset SHA-384" style="width:100%;border-radius:2px; border-color:#EEE; resize: none" ng-model="asset.asset_hash"></textarea>
       <span class="input-group-btn" style="padding-right:0px; padding-left:12px">
-        <button class="btn btn-default btn-copy" type="button" style="border-radius:100%; padding-top:9px; padding-bottom:9px" data-clipboard-text="https://assets.csh.rit.edu/uploads/{{asset.name}}" data-toggle="tooltip" data-placement="top" title="Copy to Clipboard"><i class="fa fa-clipboard"></i></button>
+        <button class="btn btn-default btn-copy" type="button" style="border-radius:100%; padding-top:9px; padding-bottom:9px" id="successSHAClipboard" data-clipboard-text="{{asset.asset_hash}}" data-toggle="tooltip" ng-click="copyAsset()" data-placement="top" title="Copy to Clipboard" ng-hide="userAgent()" tooltip><i class="fa fa-clipboard"></i></button>
       </span>
                     
     </div><!-- /input-group -->
+    
+    
+    
+    
+    
+    
+    
+    
+  </div>
+                            <hr style="margin-bottom:10px;">
+                        <div class="input-group">
+      <input type="text" class="form-control" placeholder="Asset URL" value="https://assets.csh.rit.edu/uploads/{{asset.name}}" id="url" style="text-overflow: ellipsis;">
+      <span class="input-group-btn" style="padding-right:0px; padding-left:12px">
+        <button class="btn btn-default btn-copy" type="button" style="border-radius:100%; padding-top:9px; padding-bottom:9px" data-clipboard-text="https://assets.csh.rit.edu/uploads/{{asset.name}}" data-toggle="tooltip" ng-click="copyAsset()" data-placement="top" title="Copy to Clipboard" ng-hide="userAgent()" tooltip><i class="fa fa-clipboard"></i></button>
+      </span>
+                    
+    </div><!-- /input-group -->
+                        </div>
+                        
                         
                         </div>
             
                     </div>
+                    
+                
                 </div>
             </div>
                 
@@ -116,46 +154,66 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="myModalLabel">Upload Asset</h4>
       </div>
-        <form name="uploadAsset" method="post" action="#">
+        <form name="uploadForm" id="uploadForm" method="post" action="/upload" enctype="multipart/form-data">
       <div class="modal-body">
+          <div id="errorUploadContainer" class="success-upload-container" style="display:none;">
+               
+            </div>
+          
+            <div id="successUploadContainer" class="success-upload-container" style="display:none;">
+                <img class="img-responsive success-image" src="" id="successImage">
+                <hr>
+                <p style="color:#999">URL</p>
+                <div class="input-group" style="margin-top:-10px;">
+      <input type="text" class="form-control" placeholder="Asset URL" id="successURL" style="text-overflow: ellipsis;">
+      <span class="input-group-btn" style="padding-right:0px; padding-left:12px">
+        <button class="btn btn-default btn-copy" type="button" style="border-radius:100%; padding-top:9px; padding-bottom:9px" id="successURLClipboard" data-clipboard-text="" data-toggle="tooltip" ng-click="copyAsset()" data-placement="top" title="Copy to Clipboard" ng-hide="userAgent()" tooltip><i class="fa fa-clipboard"></i></button>
+      </span>
+                    
+    </div><!-- /input-group -->
+                <p style="color:#999">SHA-384 HASH</p>
+                
+                <div class="input-group" style="margin-top:-10px;">
+                    <textarea type="text" class="form-control" placeholder="Asset SHA-384" id="successSHA" style="text-overflow: ellipsis; resize:none"></textarea>
+      <span class="input-group-btn" style="padding-right:0px; padding-left:12px">
+          <!-- FIX THIS
+        <button class="btn btn-default btn-copy" type="button" style="border-radius:100%; padding-top:9px; padding-bottom:9px" id="successSHAClipboard" data-clipboard-text="" data-toggle="tooltip" ng-click="copyAsset()" data-placement="top" title="Copy to Clipboard" ng-hide="userAgent()" tooltip><i class="fa fa-clipboard"></i></button> -->
+      </span>
+                    
+    </div><!-- /input-group -->
+            </div>
+          
+          
+          
         
-        
+            <div id="uploadContainer">
             <div class="form-group label-floating is-empty upload-form-group">
                 
-                <label class="control-label" for="assetName">Asset Name</label>
-                
-                <input class="form-control" id="assetName" name="common_name" type="text">
+                <input class="form-control" id="common_name" name="common_name" type="text" placeholder="Asset Name">
                 <span class="material-input"></span>
             </div>
             <div class="form-group label-floating upload-form-group is-empty">
-                <label for="textArea" class="control-label">Brief Description</label>
-
+        
+                <textarea class="form-control" rows="3" id="description" name="description" placeholder="Description" type="text"></textarea>
+            
                 
-                <textarea class="form-control" rows="3" id="description" name="description"></textarea>
-                <span class="help-block">Add a brief description of this asset.</span>
+                
+                
+                
+                
                 
               <span class="material-input"></span>
             </div>
-            <div class="form-group is-empty is-fileinput">
-            <input type="file" id="file" name="file" multiple="">
-            <div class="input-group" style="margin-top:5px;">
-              <input type="text" readonly="" class="form-control" placeholder="Select File..." name="file">
-                <span class="input-group-btn input-group-sm">
-                  <button type="button" class="btn btn-default" style="border-radius:100%; padding-top:7px; padding-bottom:7px">
-                    <i class="fa fa-file"></i>
-                  </button>
-                </span>
+            <input type="file" id="file" name="file">
+            
             </div>
-          <span class="material-input"></span></div>
-            
-            
           
           
         
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-danger"><i class="fa fa-upload" type="submit"></i> Upload</button>
+        <button type="submit" id="uploadSubmit" class="btn btn-danger" ><i class="fa fa-upload"></i> Upload</button>
       </div>
           </form>
     </div>
@@ -171,11 +229,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-    <script src="resources/js/material.min.js"></script>
-    <script src="resources/js/salvattore.min.js"></script>
-    <script src="resources/js/clipboard.min.js"></script>
-      <script src="resources/js/app.js"></script>
-      <script src="resources/js/assets.js"></script>
+    <script src="https://assets.csh.rit.edu/uploads/material.min.js" integrity="sha384-7j8Ht/bJHcmqRl2Me9JKxwcSWnNYyltqrAbsIrqTLGgBTQKuti3CDd47M08Mv2bM" crossorigin="anonymous"></script>
+    <script src="https://assets.csh.rit.edu/uploads/clipboard.min.js" integrity="sha384-6IvGwMLZzeEDqfqkglJOV5PIsjfAnO7VLUOZKdFasr8OfwhrG5BU1xnrmfYhIJbA" crossorigin="anonymous"></script>
+    <script src="resources/js/app.js"></script>
+    <script src="resources/js/assets.js"></script>
     
   </body>
 </html>
