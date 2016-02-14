@@ -1,6 +1,6 @@
 $(document).ready(function(){
     
-    $.material.init()
+$.material.init()
 $('.btn-copy').tooltip()
 
 $('.btn-copy').click(function(){
