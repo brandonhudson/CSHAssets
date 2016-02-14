@@ -18,12 +18,13 @@ def hash_file(fname):
     return m.hexdigest()
 
 # Add file to local database
-def add_file(file_hash, file_name, description, author):
+def add_file(file_hash, file_name, common_name, description, author):
     with open("upload_data.json", mode="r+", encoding='utf-8') as db:
         data = json.load(db)
         print(data)
         entry = {
             'hash': file_hash,
+            'common_name': common_name,
             'name': file_name,
             'description': description,
             'author': author,
@@ -48,6 +49,7 @@ def upload_file():
     if request.method == 'POST':
         file_ = request.files['file']
         author = request.headers.get('x-webauth-ldap-cn')
+        common_name = request.form.get('common_name')
         description = request.form.get('description')
         if file_:
             print(file_.__dict__)
@@ -57,7 +59,7 @@ def upload_file():
             if not os.path.exists(filepath):
                 file_.save(filepath)
                 file_hash = hash_file(filepath)
-                add_file(file_hash, filename, description, author)
+                add_file(file_hash, filename, common_name, description, author)
             else:
                 return "ERROR FILE EXISTS!!!!"
             return os.path.join('/uploads', filename)
