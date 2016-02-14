@@ -64,15 +64,15 @@
             <div id="grid" data-columns>
                 
                 <!-- ng-repeat the following -->
-                <div class="panel panel-default" style="min-height:190px;" ng-repeat="asset in data | filter:search">
+                <div class="panel panel-default" style="min-height:190px;" ng-repeat="asset in data">
                     <div class="panel-body">
                         <div class="asset-image-container">
-                            <img ng-src="{{setSrc(asset.name)}}" class="img-responsive asset-image">
+                            <img ng-src="{{setSrc({{asset.name}})}}" class="img-responsive asset-image">
                             
                         </div>
                         <hr style="margin-bottom:10px;">
                         <div class="asset-name">
-                            {{asset.name}}
+                            {{asset.common_name}}
                             
                         </div>    
                         <div class="asset-author-date">
@@ -124,7 +124,7 @@
                 
                 <label class="control-label" for="assetName">Asset Name</label>
                 
-                <input class="form-control" id="assetName" name="name" type="text">
+                <input class="form-control" id="assetName" name="common_name" type="text">
                 <span class="material-input"></span>
             </div>
             <div class="form-group label-floating upload-form-group is-empty">
@@ -139,7 +139,7 @@
             <div class="form-group is-empty is-fileinput">
             <input type="file" id="file" name="file" multiple="">
             <div class="input-group" style="margin-top:5px;">
-              <input type="text" readonly="" class="form-control" placeholder="Select File...">
+              <input type="text" readonly="" class="form-control" placeholder="Select File..." name="file">
                 <span class="input-group-btn input-group-sm">
                   <button type="button" class="btn btn-default" style="border-radius:100%; padding-top:7px; padding-bottom:7px">
                     <i class="fa fa-file"></i>
@@ -155,7 +155,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-danger"><i class="fa fa-upload"></i> Upload</button>
+        <button type="button" class="btn btn-danger"><i class="fa fa-upload" type="submit"></i> Upload</button>
       </div>
           </form>
     </div>

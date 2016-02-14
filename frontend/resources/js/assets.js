@@ -1,4 +1,6 @@
-$.material.init()
+$(document).ready(function(){
+    
+    $.material.init()
 $('.btn-copy').tooltip()
 
 $('.btn-copy').click(function(){
@@ -37,6 +39,9 @@ if ((is_chrome)&&(is_safari)) {is_safari=false;}
 if ((is_chrome)&&(is_opera)) {is_chrome=false;}
 
 if (is_safari) $('.btn-copy').hide();
+})
+
+
 
 
     
