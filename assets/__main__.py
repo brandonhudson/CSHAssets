@@ -61,17 +61,6 @@ def upload_file():
             else:
                 return "ERROR FILE EXISTS!!!!"
             return os.path.join('/uploads', filename)
-    # GET ROUTE FOR TESTING
-    return '''
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form action="" method=post enctype=multipart/form-data>
-      <p><input type=file name=file>
-         <textarea name="description"></textarea>
-         <input type=submit value=Upload>
-    </form>
-    '''
 
 with open(sys.argv[1]) as json_file:
     json_config = json.load(json_file)
